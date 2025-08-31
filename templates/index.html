@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#111111">
+    <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/service-worker.js')}</script>
+
+    <meta charset="UTF-8">
+    <title>美股回測平台＋Gemini AI</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; margin: 36px; }
+        h2 { color: #264fc7; margin-top: 32px; }
+        h3 { color: #364fc7; }
+        .section { margin-bottom: 36px; }
+        table { border-collapse: collapse; min-width: 480px; background: #fafbfc;}
+        th, td { padding: 6px 14px; border: 1px solid #e2e4e7; text-align: center; }
+        th { background: #e9f1ff; font-weight: bold; }
+        .price { font-weight: bold; color: #218838; background: #eafbe6; }
+        .error { color: #c00; }
+        #custom-quote-table td { font-size: 1.13em; }
+        #custom-quote-table .price { font-size: 1.25em; }
+        input, select, button { font-size: 1em; padding: 2px 6px; margin: 0 2px; }
+        @media (max-width: 700px) { table, th, td { font-size: 13px; } }
+    </style>
+</head>
+<body>
+    <script>
+  if ('serviceWorker' in navigator) {
+    // 這裡先用「/service-worker.js」的根路徑，下一步會把路由接上
+    navigator.serviceWorker.register('/service-worker.js');
+  }
+</script>
+
+    <div class="section">
+        <h2>美股前十大公司即時報價</h2>
+        <table id="top10-table">
+            <thead>
+                <tr><th>股票代碼</th><th>公司名稱</th><th>即時價格</th><th>幣別</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="section">
+        <h2>自選即時股價查詢</h2>
+        股票代碼（如 AAPL）: <input type="text" id="symbol" value="AAPL">
+        <button id="custom-quote-btn">查詢即時價</button>
+        <span id="custom-quote-msg"></span>
+        <table id="custom-quote-table" style="margin-top:10px;display:none;">
+            <thead>
+                <tr><th>股票代碼</th><th>公司名稱</th><th>即時價格</th><th>幣別</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="section">
+        <h2>回測歷史資料查詢</h2>
+        <form id="history-form" style="margin-bottom:8px;">
+            股票代碼（如 AAPL）: <input type="text" name="symbol" required value="AAPL">
+            起始日期: <input type="date" name="start" required>
+            結束日期: <input type="date" name="end" required>
+            資料頻率: 
+            <select name="interval">
+                <option value="1d">日線</option>
+                <option value="1wk">週線</option>
+                <option value="1mo">月線</option>
+            </select>
+            <button type="submit">查詢</button>
+        </form>
+        <table id="history-table"></table>
+        <div id="plotly-chart" style="height:420px;margin-top:16px;"></div>
+        <div id="history-msg" class="error"></div>
+    </div>
+    <div class="section">
+        <h2>AI 助理（Gemini）</h2>
+        <input type="text" id="ai-question" placeholder="輸入你的問題..." style="width:300px">
+        <button onclick="askGeminiAI(document.getElementById('ai-question').value)">問 Gemini AI</button>
+        <div id="ai-answer" style="margin-top:8px;color:#444;"></div>
+    </div>
+    <!-- 載入 Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <!-- 載入主要JS邏輯 -->
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
